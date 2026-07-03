@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>SDAJKHGFSDJHGK_992</title>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <style>
+        .anarchy-node { position: absolute; cursor: move; user-select: none; }
+        .spawned-text { position: absolute; background: transparent; border: none; font-family: 'Impact', monospace; font-size: 32px; outline: none; min-width: 20px; min-height: 40px; text-shadow: 2px 2px #000; z-index: 9995; }
+        .fixed-header { position: fixed; top: 0; left: 0; width: 100%; height: 90px; background: #000080; border-bottom: 5px ridge #C0C0C0; z-index: 99999; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; box-sizing: border-box; }
+        .nav-buttons a { background: #C0C0C0; color: #000; padding: 8px 16px; margin-left: 10px; font-family: 'Arial'; font-size: 14px; font-weight: bold; text-decoration: none; border: 3px outset #FFF; }
+        
+        
+        .marquee-wrapper { width: 50%; height: 45px; overflow: hidden; background: #00FF00; padding: 5px; box-sizing: border-box; display: flex; align-items: center; position: relative; }
+       
+        .marquee-track { display: flex; width: max-content; animation: scrollLeftCSS 15s linear infinite; }
+        .marquee-text-content { font-family: "Impact", sans-serif; font-size: 24px; color: #000000; white-space: nowrap; padding-right: 50px; }
+        
+        
+        .marquee-editor { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: transparent; border: none; color: transparent; caret-color: black; font-family: "Impact", sans-serif; font-size: 24px; padding: 5px; box-sizing: border-box; z-index: 2; outline: none; }
+        
+        .marquee-editor:focus { color: rgba(0,0,0,0.8); background: rgba(0, 255, 0, 0.95); }
+
+        @keyframes scrollLeftCSS {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        /* ------------------------------------------- */
+
+        .v-marquee-left, .v-marquee-right { position: absolute; top: 0; width: 60px; height: 6000px; z-index: 1; background: transparent; overflow: hidden; font-family: 'Impact'; font-size: 50px; color: #FF0000; writing-mode: vertical-rl; text-orientation: mixed; outline: none; pointer-events: none; }
+        .v-marquee-left { left: 15px; } .v-marquee-right { right: 15px; }
+        .v-marquee-left div, .v-marquee-right div { pointer-events: auto; }
+        .marquee-content-down { display: inline-block; animation: scrollDown 25s linear infinite; }
+        .marquee-content-up { display: inline-block; animation: scrollUp 25s linear infinite; }
+        @keyframes scrollDown { 0% { transform: translateY(-30%); } 100% { transform: translateY(100%); } }
+        @keyframes scrollUp { 0% { transform: translateY(100%); } 100% { transform: translateY(-30%); } }
+    </style>
+</head>
+<body bgcolor="#000000" text="#FF0000" link="#00FFFF" style="margin:0; padding-top: 110px; width:6000px; height:6000px; background: repeating-linear-gradient(45deg, #151515, #151515 30px, #000 30px, #000 60px); overflow: scroll;" ondragover="event.preventDefault()" ondrop="dropHandler(event)" onclick="spawnTextHandler(event)">
+
+    <div class="v-marquee-left">
+        <div id="mq_v_left" class="marquee-content-down" contenteditable="true" oninput="broadcastHeader(this, 'mq_v_left')">LKJHGFDSAZXCVBNMPOIUYTREWQASDFGHJKLMNBVCXZ</div>
+    </div>
+    <div class="v-marquee-right">
+        <div id="mq_v_right" class="marquee-content-up" contenteditable="true" oninput="broadcastHeader(this, 'mq_v_right')">POIUYTREWQASDFGHJKLMNBVCXZLKJHGFDSAZXCVBNM</div>
+    </div>
+
+    <div class="fixed-header">
+        <div class="marquee-wrapper">
+            <input type="text" class="marquee-editor" value="LKJHGFDSAZXCVBNMPOIUYTREWQ0987654321" oninput="updateLiveMarquee(this, 'mq_main')">
+            <div class="marquee-track" id="mq_main">
+                <span class="marquee-text-content">LKJHGFDSAZXCVBNMPOIUYTREWQ0987654321</span>
+                <span class="marquee-text-content">LKJHGFDSAZXCVBNMPOIUYTREWQ0987654321</span>
+            </div>
+        </div>
+        <div class="nav-buttons">
+            <a href="qwertyuiop.html">QWERTYUIOP</a>
+            <a href="mnbvcxz.html">MNBVCXZ</a>
+            <a href="cgbbvebrtre56.html">CGBBVEBRTRE56</a>
+        </div>
+    </div>
+
+    <h1 id="h1_1" class="anarchy-node" draggable="true" contenteditable="true" style="top:180px; left:300px; font-family:'Comic Sans MS'; color:#FFFF00; font-size:70px; margin:0; transform: rotate(-3deg);" oninput="broadcastHeader(this, 'h1_1')">AGFSDKJHGKFDSAJHG</h1>
+    
+    <table id="tbl_glitch_1" border="25" bordercolor="#FF0000" bgcolor="#FFFFFF" class="anarchy-node" draggable="true" style="top:450px; left:600px; width:600px; transform: rotate(5deg);">
+        <tr><td id="td_glitch_1" contenteditable="true" style="font-family:monospace; font-size:35px; color:black; word-break:break-all;" oninput="broadcastHeader(this, 'td_glitch_1')">POIUYTREWQASDFGHJKLMNBVCXZ</td></tr>
+    </table>
+
+    <script>
+        const socket = io('http://192.168.1.85:3000'); 
+        var draggedElement = null;
+        const randomColors = ['#00FF00', '#FF00FF', '#00FFFF', '#FFFF00', '#FF3333', '#33FFF6', '#FF9900', '#FFFFFF'];
+
+        socket.emit('joinPage', 'index');
+
+        
+        function updateLiveMarquee(inputEl, targetId) {
+            const track = document.getElementById(targetId);
+            if (track) {
+                track.innerHTML = '';
+                const span1 = document.createElement('span');
+                span1.className = 'marquee-text-content';
+                span1.textContent = inputEl.value; 
+                const span2 = span1.cloneNode(true);
+                track.appendChild(span1);
+                track.appendChild(span2);
+            }
+            socket.emit('updateText', { id: targetId, html: inputEl.value });
+        }
+
+        function spawnTextHandler(e) {
+            if (e.target.hasAttribute('contenteditable') || e.target.classList.contains('marquee-editor') || e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return;
+            const id = 'txt_' + Math.random().toString(36).substr(2, 9);
+            const left = e.clientX + window.scrollX + 'px';
+            const top = e.clientY + window.scrollY + 'px';
+            const chosenColor = randomColors[Math.floor(Math.random() * randomColors.length)];
+            sendSpawnText(id, left, top, '', chosenColor);
+            socket.emit('spawnText', { id: id, left: left, top: top, color: chosenColor });
+        }
+
+        function sendSpawnText(id, left, top, text, color) {
+            if (document.getElementById(id)) return;
+            const input = document.createElement('span');
+            input.id = id; input.className = 'spawned-text anarchy-node';
+            input.style.left = left; input.style.top = top;
+            input.style.color = color || '#00FF00';
+            input.contentEditable = true; input.draggable = true; input.innerHTML = text; 
+            input.addEventListener('input', function() { socket.emit('updateText', { id: id, html: input.innerHTML }); });
+            document.body.appendChild(input);
+            if(!text) { input.focus(); }
+        }
+
+        function broadcastHeader(el, targetId) { socket.emit('updateText', { id: targetId, html: el.innerHTML }); }
+
+        socket.on('elementMoved', (data) => { const el = document.getElementById(data.id); if (el) { el.style.left = data.left; el.style.top = data.top; } });
+        
+        
+        socket.on('textUpdated', (data) => { 
+            const el = document.getElementById(data.id); 
+            if (el) { 
+                if (data.id === 'mq_main') {
+                    el.innerHTML = '';
+                    const span1 = document.createElement('span');
+                    span1.className = 'marquee-text-content';
+                    span1.textContent = data.html; 
+                    const span2 = span1.cloneNode(true);
+                    el.appendChild(span1);
+                    el.appendChild(span2);
+
+                    const wrapper = el.parentElement;
+                    const editor = wrapper.querySelector('.marquee-editor');
+                    if (editor) editor.value = data.html;
+                } else {
+                    el.innerHTML = data.html; 
+                }
+            } 
+        });
+        
+        socket.on('textSpawned', (data) => { sendSpawnText(data.id, data.left, data.top, '', data.color); });
+        socket.on('imageAdded', (data) => { addNewImage(data.src, data.id, data.left, data.top); });
+
+        document.addEventListener('dragstart', function(e) { if(e.target.classList.contains('anarchy-node')) { draggedElement = e.target; } });
+        document.addEventListener('dragover', function(e) { e.preventDefault(); });
+        document.addEventListener('drop', function(e) {
+            if(draggedElement) {
+                const left = e.clientX + window.scrollX - 30 + 'px'; const top = e.clientY + window.scrollY - 15 + 'px';
+                draggedElement.style.left = left; draggedElement.style.top = top;
+                socket.emit('moveElement', { id: draggedElement.id, left: left, top: top });
+                draggedElement = null;
+            }
+        });
+
+        function dropHandler(ev) {
+            ev.preventDefault();
+            if (ev.dataTransfer.files) {
+                for (var i = 0; i < ev.dataTransfer.files.length; i++) {
+                    var file = ev.dataTransfer.files[i];
+                    if (file.type.startsWith('image/')) {
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            const imgId = 'img_' + Math.random().toString(36).substr(2, 9);
+                            const left = ev.clientX + window.scrollX + 'px'; const top = ev.clientY + window.scrollY + 'px';
+                            addNewImage(e.target.result, imgId, left, top);
+                            socket.emit('addImage', { src: e.target.result, id: imgId, left: left, top: top });
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                }
+            }
+        }
+        function addNewImage(src, id, left, top) { if (document.getElementById(id)) return; var img = document.createElement('img'); img.id = id; img.src = src; img.style.position = 'absolute'; img.style.left = left; img.style.top = top; img.style.width = '350px'; img.className = 'anarchy-node'; img.draggable = true; document.body.appendChild(img); }
+    </script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>CGBBVEBRTRE56</title>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <style>
+        .anarchy-node { position: absolute; cursor: move; }
+        .spawned-text { position: absolute; background: transparent; border: none; font-family: 'Impact', sans-serif; font-size: 34px; outline: none; min-width: 20px; text-shadow: 2px 2px #000; z-index: 9995; }
+        .fixed-header { position: fixed; top: 0; left: 0; width: 100%; height: 90px; background: #FF0000; border-bottom: 5px double #00FF00; z-index: 99999; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; box-sizing: border-box; }
+        .nav-buttons a { background: #000; color: #0FF; padding: 8px 16px; margin-left: 10px; font-family: 'Impact'; font-size: 14px; text-decoration: none; border: 3px outset #00FF00; }
+        
+       
+        .marquee-wrapper { width: 50%; height: 45px; overflow: hidden; background: #000000; padding: 5px; box-sizing: border-box; display: flex; align-items: center; position: relative; }
+        
+        .marquee-track { display: flex; width: max-content; animation: scrollRightCSS 15s linear infinite; }
+        .marquee-text-content { font-family: "Impact", sans-serif; font-size: 26px; color: #00FF00; white-space: nowrap; padding-left: 50px; }
+        
+        
+        .marquee-editor { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: transparent; border: none; color: transparent; caret-color: #00FF00; font-family: "Impact", sans-serif; font-size: 26px; padding: 5px; box-sizing: border-box; z-index: 2; outline: none; }
+        
+        .marquee-editor:focus { color: #00FF00; background: rgba(0, 0, 0, 0.95); }
+
+        @keyframes scrollRightCSS {
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(0); }
+        }
+        /* --------------------------------------------------- */
+
+        .v-marquee-left, .v-marquee-right { position: absolute; top: 0; width: 60px; height: 6000px; z-index: 1; background: transparent; overflow: hidden; font-family: 'Impact'; font-size: 50px; color: #FF0000; writing-mode: vertical-rl; text-orientation: mixed; outline: none; pointer-events: none; }
+        .v-marquee-left { left: 15px; } .v-marquee-right { right: 15px; }
+        .v-marquee-left div, .v-marquee-right div { pointer-events: auto; }
+        .marquee-content-down { display: inline-block; animation: scrollDown 25s linear infinite; }
+        .marquee-content-up { display: inline-block; animation: scrollUp 25s linear infinite; }
+        @keyframes scrollDown { 0% { transform: translateY(-30%); } 100% { transform: translateY(100%); } }
+        @keyframes scrollUp { 0% { transform: translateY(100%); } 100% { transform: translateY(-30%); } }
+    </style>
+</head>
+<body bgcolor="#003300" style="margin:0; padding-top: 110px; width:6000px; height:6000px; background: repeating-linear-gradient(90deg, #003300, #003300 20px, #000000 20px, #000000 40px); overflow: scroll;" ondragover="event.preventDefault()" ondrop="dropHandler(event)" onclick="spawnTextHandler(event)">
+
+    <div class="v-marquee-left">
+        <div id="mq_v_left_c" class="marquee-content-down" contenteditable="true" oninput="broadcastHeader(this, 'mq_v_left_c')">ASDFGHJKLZXCVBNMQWERTYUIOP</div>
+    </div>
+    <div class="v-marquee-right">
+        <div id="mq_v_right_c" class="marquee-content-up" contenteditable="true" oninput="broadcastHeader(this, 'mq_v_right_c')">ZXCVBNMPOIUYTREWQASDFGHJKL</div>
+    </div>
+
+    <div class="fixed-header">
+        <div class="marquee-wrapper">
+            <input type="text" class="marquee-editor" value="CGBBVEBRTRE56CGBBVEBRTRE56" oninput="updateLiveMarquee(this, 'mq_cgbb')">
+            <div class="marquee-track" id="mq_cgbb">
+                <span class="marquee-text-content">CGBBVEBRTRE56CGBBVEBRTRE56</span>
+                <span class="marquee-text-content">CGBBVEBRTRE56CGBBVEBRTRE56</span>
+            </div>
+        </div>
+        <div class="nav-buttons">
+            <a href="index.html">ROOT_ASDF</a>
+            <a href="qwertyuiop.html">QWERTYUIOP</a>
+            <a href="mnbvcxz.html">MNBVCXZ</a>
+        </div>
+    </div>
+
+    <div id="c_block_1" class="anarchy-node" draggable="true" contenteditable="true" style="top:250px; left:450px; background:#FF00FF; color:#000; font-family:'Impact'; font-size:45px; padding:30px; border:10px dashed white; transform: rotate(15deg);" oninput="broadcastHeader(this, 'c_block_1')">
+        ASDFGZXCVB_882
+    </div>
+
+    <script>
+        const socket = io('http://192.168.1.85:3000');
+        var draggedElement = null;
+        const randomColors = ['#FF00FF', '#00FF00', '#00FFFF', '#FFFF00', '#FF3333', '#FFFFFF', '#000000'];
+
+        socket.emit('joinPage', 'cgbbvebrtre56');
+
+        
+        function updateLiveMarquee(inputEl, targetId) {
+            const track = document.getElementById(targetId);
+            if (track) {
+                track.innerHTML = `<span class="marquee-text-content">${inputEl.value}</span><span class="marquee-text-content">${inputEl.value}</span>`;
+            }
+            socket.emit('updateText', { id: targetId, html: inputEl.value });
+        }
+
+        function spawnTextHandler(e) {
+            if (e.target.hasAttribute('contenteditable') || e.target.classList.contains('marquee-editor') || e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return;
+            const id = 'txt_' + Math.random().toString(36).substr(2, 9);
+            const left = e.clientX + window.scrollX + 'px';
+            const top = e.clientY + window.scrollY + 'px';
+            const chosenColor = randomColors[Math.floor(Math.random() * randomColors.length)];
+            sendSpawnText(id, left, top, '', chosenColor);
+            socket.emit('spawnText', { id: id, left: left, top: top, color: chosenColor });
+        }
+        function sendSpawnText(id, left, top, text, color) {
+            if (document.getElementById(id)) return;
+            const input = document.createElement('span');
+            input.id = id; input.className = 'spawned-text anarchy-node';
+            input.style.left = left; input.style.top = top; input.style.color = color;
+            input.contentEditable = true; input.draggable = true; input.innerHTML = text;
+            input.addEventListener('input', function() { socket.emit('updateText', { id: id, html: input.innerHTML }); });
+            document.body.appendChild(input);
+            if(!text) { input.focus(); }
+        }
+
+        function broadcastHeader(el, targetId) { socket.emit('updateText', { id: targetId, html: el.innerHTML }); }
+        
+        socket.on('elementMoved', (data) => { const el = document.getElementById(data.id); if (el) { el.style.left = data.left; el.style.top = data.top; } });
+        
+        socket.on('textUpdated', (data) => { 
+            const el = document.getElementById(data.id); 
+            if (el) { 
+                if (data.id === 'mq_cgbb') {
+                    el.innerHTML = '';
+                    const span1 = document.createElement('span');
+                    span1.className = 'marquee-text-content';
+                    span1.textContent = data.html;
+            
+                    const span2 = span1.cloneNode(true);
+            
+                    el.appendChild(span1);
+                    el.appendChild(span2);
+
+                    const wrapper = el.parentElement;
+                    const editor = wrapper.querySelector('.marquee-editor');
+                    if (editor) editor.value = data.html;
+                } else {
+                    el.innerHTML = data.html; 
+                }
+            } 
+        });
+        
+        socket.on('textSpawned', (data) => { sendSpawnText(data.id, data.left, data.top, '', data.color); });
+        socket.on('imageAdded', (data) => { addNewImage(data.src, data.id, data.left, data.top); });
+
+        document.addEventListener('dragstart', function(e) { if(e.target.classList.contains('anarchy-node')) { draggedElement = e.target; } });
+        document.addEventListener('dragover', function(e) { e.preventDefault(); });
+        document.addEventListener('drop', function(e) {
+            if(draggedElement) {
+                const left = e.clientX + window.scrollX - 30 + 'px'; const top = e.clientY + window.scrollY - 15 + 'px';
+                draggedElement.style.left = left; draggedElement.style.top = top;
+                socket.emit('moveElement', { id: draggedElement.id, left: left, top: top });
+                draggedElement = null;
+            }
+        });
+        function dropHandler(ev) { ev.preventDefault(); if (ev.dataTransfer.files) { for (var i = 0; i < ev.dataTransfer.files.length; i++) { var file = ev.dataTransfer.files[i]; if (file.type.startsWith('image/')) { var reader = new FileReader(); reader.onload = function(e) { const imgId = 'img_' + Math.random().toString(36).substr(2, 9); const left = ev.clientX + window.scrollX + 'px'; const top = ev.clientY + window.scrollY + 'px'; addNewImage(e.target.result, imgId, left, top); socket.emit('addImage', { src: e.target.result, id: imgId, left: left, top: top }); }; reader.readAsDataURL(file); } } } }
+        function addNewImage(src, id, left, top) { if (document.getElementById(id)) return; var img = document.createElement('img'); img.id = id; img.src = src; img.style.position = 'absolute'; img.style.left = left; img.style.top = top; img.style.width = '350px'; img.className = 'anarchy-node'; img.draggable = true; document.body.appendChild(img); }
+    </script>
+</body>
+</html>
