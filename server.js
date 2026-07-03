@@ -5,6 +5,14 @@ const { Server } = require('socket.io');
 const app = express();
 const server = http.createServer(app);
 
+// === NOVO: Adicionado para servir os teus HTMLs diretamente no Render ===
+app.use(express.static(__dirname));
+
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+});
+// =======================================================================
+
 const io = new Server(server, {
     cors: {
         origin: "*",
