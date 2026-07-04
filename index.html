@@ -137,42 +137,31 @@
             } 
         });
         
+        socket.on('textSpawned', (data) => { sendSpawnText(data.id, data.left, data.top, '', data.color); });
+        socket.on('imageAdded', (data) => { addNewImage(data.src, data.id, data.left, data.top); });
+
         document.addEventListener('dragstart', function(e) { if(e.target.classList.contains('anarchy-node')) { draggedElement = e.target; } });
         document.addEventListener('dragover', function(e) { e.preventDefault(); });
         document.addEventListener('drop', function(e) {
             e.preventDefault();
-            
-            // 1. Mover imagens que já existem no site
             if(draggedElement) {
                 const left = e.clientX + window.scrollX - 30 + 'px'; const top = e.clientY + window.scrollY - 15 + 'px';
                 draggedElement.style.left = left; draggedElement.style.top = top;
                 socket.emit('moveElement', { id: draggedElement.id, left: left, top: top });
                 draggedElement = null;
-            } 
-            // 2. Se arrastarem uma imagem/link diretamente da internet
-            else {
-                const imageUrl = e.dataTransfer.getData('text/plain') || e.dataTransfer.getData('text/uri-list');
-                const left = e.clientX + window.scrollX + 'px';
-                const top = e.clientY + window.scrollY + 'px';
-                
-                if (imageUrl && (imageUrl.startsWith('http://') || imageUrl.startsWith('https://') || imageUrl.startsWith('data:image'))) {
-                    const imgId = 'img_' + Math.random().toString(36).substr(2, 9);
-                    addNewImage(imageUrl, imgId, left, top);
-                    socket.emit('addImage', { src: imageUrl, id: imgId, left: left, top: top });
-                }
-                // 3. Caso o browser deixe arrastar ficheiros do PC (Fica como plano B)
-                else if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                    for (var i = 0; i < e.dataTransfer.files.length; i++) {
-                        var file = e.dataTransfer.files[i];
-                        if (file.type.startsWith('image/')) {
-                            var reader = new FileReader();
-                            reader.onload = function(event) {
-                                const imgId = 'img_' + Math.random().toString(36).substr(2, 9);
-                                addNewImage(event.target.result, imgId, left, top);
-                                socket.emit('addImage', { src: event.target.result, id: imgId, left: left, top: top });
-                            };
-                            reader.readAsDataURL(file);
-                        }
+            } else if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                for (var i = 0; i < e.dataTransfer.files.length; i++) {
+                    var file = e.dataTransfer.files[i];
+                    if (file.type.startsWith('image/')) {
+                        var reader = new FileReader();
+                        reader.onload = function(event) {
+                            const imgId = 'img_' + Math.random().toString(36).substr(2, 9);
+                            const left = e.clientX + window.scrollX + 'px';
+                            const top = e.clientY + window.scrollY + 'px';
+                            addNewImage(event.target.result, imgId, left, top);
+                            socket.emit('addImage', { src: event.target.result, id: imgId, left: left, top: top });
+                        };
+                        reader.readAsDataURL(file);
                     }
                 }
             }
