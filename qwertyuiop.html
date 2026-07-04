@@ -134,14 +134,29 @@
         document.addEventListener('dragstart', function(e) { if(e.target.classList.contains('anarchy-node')) { draggedElement = e.target; } });
         document.addEventListener('dragover', function(e) { e.preventDefault(); });
         document.addEventListener('drop', function(e) {
+            e.preventDefault();
             if(draggedElement) {
                 const left = e.clientX + window.scrollX - 30 + 'px'; const top = e.clientY + window.scrollY - 15 + 'px';
                 draggedElement.style.left = left; draggedElement.style.top = top;
                 socket.emit('moveElement', { id: draggedElement.id, left: left, top: top });
                 draggedElement = null;
+            } else if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                for (var i = 0; i < e.dataTransfer.files.length; i++) {
+                    var file = e.dataTransfer.files[i];
+                    if (file.type.startsWith('image/')) {
+                        var reader = new FileReader();
+                        reader.onload = function(event) {
+                            const imgId = 'img_' + Math.random().toString(36).substr(2, 9);
+                            const left = e.clientX + window.scrollX + 'px';
+                            const top = e.clientY + window.scrollY + 'px';
+                            addNewImage(event.target.result, imgId, left, top);
+                            socket.emit('addImage', { src: event.target.result, id: imgId, left: left, top: top });
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                }
             }
         });
-        function dropHandler(ev) { ev.preventDefault(); if (ev.dataTransfer.files) { for (var i = 0; i < ev.dataTransfer.files.length; i++) { var file = ev.dataTransfer.files[i]; if (file.type.startsWith('image/')) { var reader = new FileReader(); reader.onload = function(e) { const imgId = 'img_' + Math.random().toString(36).substr(2, 9); const left = ev.clientX + window.scrollX + 'px'; const top = ev.clientY + window.scrollY + 'px'; addNewImage(e.target.result, imgId, left, top); socket.emit('addImage', { src: e.target.result, id: imgId, left: left, top: top }); }; reader.readAsDataURL(file); } } } }
         function addNewImage(src, id, left, top) { if (document.getElementById(id)) return; var img = document.createElement('img'); img.id = id; img.src = src; img.style.position = 'absolute'; img.style.left = left; img.style.top = top; img.style.width = '350px'; img.className = 'anarchy-node'; img.draggable = true; document.body.appendChild(img); }
     </script>
 </body>
